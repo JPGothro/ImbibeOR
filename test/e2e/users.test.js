@@ -172,6 +172,19 @@ describe('user routing', () => {
       .catch(done);
   });
 
+  it('UNFOLLOW User 1', done => {
+    followsUser.userId = testUser._id;
+    req
+      .put(`/api/users/unfollowUser/${testFollows._id}`)
+      .set('Authorization', `Bearer ${followsToken}`)
+      .send(followsUser)
+      .then(res => {
+        assert.isOk(res.body, 'Update succeeded');
+        done();
+      })
+      .catch(done);
+  });
+
   it('FOLLOW Thread 1', done => {
     followsThread.threadId = testUser._id;
     req
@@ -214,18 +227,29 @@ describe('user routing', () => {
       .catch(done);
   });
 
+  it('UNFOLLOW Thread 2', done => {
+    followsThread.threadId = testAdmin._id;
+    req
+      .put(`/api/users/unfollowThread/${testFollows._id}`)
+      .set('Authorization', `Bearer ${followsToken}`)
+      .send(followsThread)
+      .then(res => {
+        assert.isOk(res.body, 'Update succeeded');
+        done();
+      })
+      .catch(done);
+  });
+
   it('GET single user', done => {
     req
       .get(`/api/users/${testFollows._id}`)
       .set('authorization', `Bearer ${adminToken}`)
       .then(res => {
         assert.equal(res.body._id, testFollows._id);
-        expect(res.body.usersFollowed).lengthOf(2);
+        expect(res.body.usersFollowed).lengthOf(1);
         assert.equal(res.body.usersFollowed[0], testFollows.usersFollowed[0]);
-        assert.equal(res.body.usersFollowed[1], testFollows.usersFollowed[1]);
-        expect(res.body.threadsFollowed).lengthOf(2);
+        expect(res.body.threadsFollowed).lengthOf(1);
         assert.equal(res.body.threadsFollowed[0], testFollows.threadsFollowed[0]);
-        assert.equal(res.body.threadsFollowed[1], testFollows.threadsFollowed[1]);
         done();
       })
       .catch(done);
